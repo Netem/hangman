@@ -4,6 +4,8 @@
 # 2) used || instead of "or"
 # 3) missing session.<command>
 
+# Unstable version - lacks support for missing files
+
 require_relative "hangmanclass.rb"
 
 class PlayHangman

@@ -3,10 +3,12 @@
 class Hangman
    attr_accessor :guesses, :guesses_left, :gallow_pics, :secret_word
 
+   NUM_GUESSES = 11
+
    def initialize(file)
       @secret_word = choose_word(file)
-      @guesses = Array.new
-      @guesses_left = 11
+      @guesses = []
+      @guesses_left = NUM_GUESSES
       @gallow_pics = get_frames
    end
 
@@ -22,7 +24,7 @@ class Hangman
    end
 
    def draw_gallow
-      gallow_pics[get_wrong_guesses.size]
+      gallow_pics[get_wrong_guesses.size] # Picks the pic based on how many faulty guesses the user's made
    end
 
    def get_right_guesses
@@ -33,22 +35,19 @@ class Hangman
       @guesses - @secret_word # Returns an array with the wrong guessed letters
    end
 
-   def guess_letter(letter)
+   def guess_letter(letter) 
       guesses.push(letter)
       update_guesses_left
    end
 
    def get_frames
-      frames = Array.new
-      for i in 1..12
-         file = open("./ascii_frames/frame_#{i}.txt")
-         frames.push file.read
-         file.close
-      end
-      return frames
+     frames = Dir.entries("ascii_frames").sort
+     frames.delete(".")
+     frames.delete("..")
+     frames.map {|ascii| f = open("./ascii_frames/#{ascii}"); f.read} # Can't close f, because only the last value is returned
    end
 
    def update_guesses_left
-      @guesses_left = 11 - get_wrong_guesses.length
+      @guesses_left = NUM_GUESSES - get_wrong_guesses.length
    end
 end
