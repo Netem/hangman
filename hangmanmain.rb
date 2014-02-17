@@ -1,10 +1,6 @@
 # hangmanmain.rb
 
-# Mistakes: 1) gets input for y/n contained a \n, so the comparision to %w{y yes} was always false
-# 2) used || instead of "or"
-# 3) missing session.<command>
-
-# Unstable version - lacks support for missing files
+# Lacks support for missing files
 
 require_relative "hangmanclass.rb"
 
@@ -63,6 +59,8 @@ class PlayHangman
       print "Your guess: "
       guess = session.get_input
       session.play_the_game(guess)
-    end until session.play.secret_word.eql? session.play.get_right_guesses or session.play.guesses_left < 1
+    end until session.play.secret_word.eql?(session.play.get_right_guesses) || session.play.guesses_left < 1
+    # If using "or", don't need the brackets
+    # If using ||, DO need the brackets
   end
 end

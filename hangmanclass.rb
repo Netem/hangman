@@ -2,8 +2,8 @@
 
 class Hangman
    attr_accessor :guesses, :guesses_left, :gallow_pics, :secret_word
-
    NUM_GUESSES = 11
+
 
    def initialize(file)
       @secret_word = choose_word(file)
