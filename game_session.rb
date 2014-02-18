@@ -1,6 +1,7 @@
-# gamesession.rb
-
-require_relative "hangmanmain.rb"
+# game_session.rb
+require 'rubygems'
+require 'pry'
+require_relative "play_hangman.rb"
 
 class GameSession
   def self.run
@@ -12,7 +13,7 @@ class GameSession
   def play!
     begin
       PlayHangman.run
-    end until play_again? == false
+    end while play_again?
   end
 
   def play_again?
