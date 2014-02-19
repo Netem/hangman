@@ -1,3 +1,5 @@
 # spec_helper.rb
 
-require_relative "../hangmanclass.rb"
+require 'rubygems'
+require 'pry'
+require_relative "../hangman.rb"

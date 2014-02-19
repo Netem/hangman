@@ -5,11 +5,10 @@
 require_relative "hangman.rb"
 
 class PlayHangman
-  attr_accessor :file, :play
+  attr_accessor :play
 
   def initialize
-    file = "words.txt"
-    @play = Hangman.new file
+    @play = Hangman.new
   end
 
   def get_input
@@ -28,8 +27,8 @@ class PlayHangman
   end
 
   def check(guess)
-    if play.already_guessed? guess
-      puts "Already guessed!"
+    unless play.new_guess? guess
+      puts "Already guessed!\n"
       return
     end
 
