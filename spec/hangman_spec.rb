@@ -8,21 +8,29 @@ describe Hangman do
     @play = Hangman.new "spec\\test_words.txt"
   end
 
+
+  def before_any_guess method_name, expected_class, expected_content
+    it "#{method_name} is #{expected_class}" do
+      method_name.should be_an_instance_of expected_class
+    end
+    it "#{method_name} returns #{expected_content}" do
+      method_name.should eql expected_content
+    end
+  end
+
+
+
   describe "#new" do
     it "creates an instance of the Hangmanclass" do
       @play.should be_an_instance_of Hangman
     end
   end
 
-  describe "#choose_word" do
-    it "@secret_word returns an array" do
-      @play.secret_word.should be_an_instance_of Array
-    end
 
-    it "@secret_word returns an array of size 4" do
-      @play.secret_word.size.should eql 4
-    end
+  describe "#choose_word" do
+    before_any_guess @play.secret_word, Array, %w{- - - -}
   end
+
 
   describe "#draw_gallow" do
     context "no guesses made" do
@@ -33,14 +41,12 @@ describe Hangman do
 
     context "4 incorrect guesses made" do
       it "returns an array of size 56" do
-        @play.guess_letter "a"
-        @play.guess_letter "c"
-        @play.guess_letter "d"
-        @play.guess_letter "e"
+        @play.guesses = %W{a c d e}
         @play.draw_gallow.size.should eql 56
       end
     end
   end
+
 
   describe "#get_frames" do
     it "@gallow_pics returns an array" do
@@ -51,56 +57,51 @@ describe Hangman do
     end
   end
 
+
   describe "#get_right_guesses" do
     it "returns an array" do
       @play.get_right_guesses.should be_an_instance_of Array
     end
 
-    context "when no guesses have been made" do
+    context "when no guesses" do
       it "returns an array consisting of '-'" do
         @play.get_right_guesses.include? "-"
       end
-    end
 
-    context "when no guesses have been made" do
       it "returns an array of size 4" do
         @play.get_right_guesses.size.should eql 4
       end
     end
 
-        context "1 correct guess made" do
+    context "when 1 correct guess" do
       it "returns an array with the correct guessed letter" do
         @play.guess_letter "r"
         @play.get_right_guesses.include? "r"
       end
-    end
-
-    context "when 1 correct guess have been made" do
       it "returns an array of size 4" do
+        @play.guess_letter "r"
         @play.get_right_guesses.size.should eql 4
       end
     end
   end
+
 
   describe "#get_wrong_guesses" do
     it "returns an array" do
       @play.get_wrong_guesses.should be_an_instance_of Array
     end
 
-    context "when no guesses have been made" do
+    context "when no guesses" do
       it "returns an array of size 0" do
         @play.get_wrong_guesses.size.should eql 0
       end
     end
 
-    context "when 1 incorrect guess has been made" do
+    context "when 1 incorrect guess" do
       it "returns the incorrect letter" do
         @play.guess_letter("h")
         @play.get_wrong_guesses.include? "h"
       end
-    end
-
-    context "when 1 incorrect guess has been made" do
       it "returns an array of size 1" do
         @play.guess_letter("h")
         @play.get_wrong_guesses.size.should eql 1
@@ -108,18 +109,19 @@ describe Hangman do
     end
   end
 
+
   describe "#guess_letter" do
     it "@guesses returns an array" do
       @play.guesses.should be_an_instance_of Array
     end
 
-    context "when no guesses have been made" do
+    context "when no guesses" do
     	it "returns an empty array" do
     		@play.guesses.size.should eql 0
     	end
     end
 
-    context "when one guess has been made" do
+    context "when one guess" do
       it "returns an array of size 1" do
         @play.guess_letter "a"
         @play.guesses.size.should eql 1
@@ -127,33 +129,33 @@ describe Hangman do
   	end
   end
 
+
   describe "#guesses_left" do
     it "returns a Fixnum" do
       @play.guesses_left.should be_an_instance_of Fixnum
     end
 
-    context "when no guesses have been made" do
+    context "when no guesses" do
       it "returns 11" do
         @play.guesses_left.should eql 11
       end
     end
 
-    context "when two correct guesses have been made" do
+    context "when two correct guesses" do
       it "returns 11" do
-        @play.guess_letter "r"
-        @play.guess_letter "y"
+        @play.guesses = %w{r y}
         @play.guesses_left.should eql 11
       end
     end
 
-    context "when two incorrect guesses have been made" do
+    context "when two incorrect guesses" do
       it "returns 9" do
-        @play.guess_letter "q"
-        @play.guess_letter "w"
+        @play.guesses = %w{q w}
         @play.guesses_left.should eql 9
       end
     end
   end
+
 
   describe "#is_valid?" do
     context "when passing A" do
@@ -187,21 +189,23 @@ describe Hangman do
     end
   end
 
+
   describe "#lose?" do
-    context "when 10 incorrect guesses and 3 correct guesses have been made" do
+    context "when 10 incorrect guesses and 3 correct guesses" do
       it "returns false" do
         @play.guesses = %w{r u b q w e a s d z x c v}
         @play.lose?.should eql false
       end
     end
 
-    context "when 11 incorrect guesses and 3 correct guesses have been made" do
+    context "when 11 incorrect guesses and 3 correct guesses" do
       it "returns true" do
         @play.guesses = %w{r u b q w e a s d z x c v p}
         @play.lose?.should eql true
       end
     end
   end
+
 
   describe "#new_guess?" do
     context "a new guess is passed" do
@@ -212,23 +216,22 @@ describe Hangman do
 
     context "three guesses have already been made, and the second guess is passed again" do
       it "returns false" do
-        @play.guess_letter "w"
-        @play.guess_letter "e"
-        @play.guess_letter "r"
+        @play.guesses = %w{w e r}
         @play.new_guess?("e").should eql false
       end
     end
   end
 
+
   describe "#win?" do
-    context "when 10 incorrect guesses and 3 correct guesses have been made" do
+    context "when 10 incorrect guesses and 3 correct guesses" do
       it "returns false" do
         @play.guesses = %w{r u b q w e a s d z x c v}
         @play.win?.should eql false
       end
     end
 
-    context "when 10 incorrect guesses and 4 correct guesses have been made" do
+    context "when 10 incorrect guesses and 4 correct guesses" do
       it "returns true" do
         @play.guesses = %w{r u b q w e a s d z x c v p y}
         @play.win?.should eql true
