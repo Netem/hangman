@@ -1,32 +1,50 @@
 # test.rb
 
-require_relative 'spec_helper.rb'
+# SHARED EXAMPLES
 
-describe Hangman do
-  before :each do
-    @play = Hangman.new "test_words.txt"
-  end
+:method_name
+:expected_class
+:initial_output
 
-  describe "#draw_gallow" do
-    it "returs an array" do
-      expect(@play.draw_gallow).to be_an_instance_of Array
-    end
-    context "when no guesses made" do
-      it "returns an array of size 8" do
-        @play.draw_gallow.size.should == 8
+    context "when no guesses" do
+      it "is #{expected_class}" do
+        @play.method_name.should be_an_instance_of expected_class
+      end
+      it "contains #{initial_content}" do
+        @play.method_name.should eql initial_output
       end
     end
-    context "when 4 incorrect guesses" do
-      it "returns an array of size 56" do
-        @play.guesses = %w{a c d e}
-        @play.draw_gallow.size == 56
+
+:method_name
+:correct_guesses
+:expected_output
+
+      context "when #{correct_guesses.size} correct guesses" do
+      it "contains #{expected_output}" do
+        @play.guesses = correct_guesses
+        @play.method_name.should eql expected_output
       end
     end
-    context "when 4 incorrect guesses and 3 correct guesses" do
-      it "returns an array of size 56" do
-        @play.guesses = %w{a c d e r u b}
-        @play.draw_gallow.size == 56
+
+:method_name
+:incorrect_guesses
+:expected_output
+
+      context "when #{incorrect_guesses.size} correct guesses" do
+      it "contains #{expected_output}" do
+        @play.guesses = incorrect_guesses
+        @play.method_name.should eql expected_output
       end
     end
-  end
-end
+
+method_name
+:correct_guesses
+:incorrect_guesses
+:expected_output
+
+      context "when #{correct_guesses.size} correct guesses, and #{incorrect_guesses.size} correct guesses" do
+      it "contains #{expected_output}" do
+        @play.guesses = incorrect_guesses + correct_guesses
+        @play.method_name.should eql expected_output
+      end
+    end

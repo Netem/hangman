@@ -4,6 +4,7 @@
 require_relative 'spec_helper.rb'
 
 describe Hangman do
+
   before :each do
     @play = Hangman.new "test_words.txt"
   end
@@ -16,31 +17,15 @@ describe Hangman do
 
 
   describe "#choose_word" do
+    it "is 'ruby'" do
+      @play.choose_word("test_words.txt").should eql %w{r u b y}
+    end
   end
 
 
   describe "#draw_gallow" do
-    it "returs an array" do
-      @play.draw_gallow.should be_an_instance_of Array
-    end
-    context "when no guesses made" do
-      it "returns an array of size 8" do
-        @play.draw_gallow.size.should == 8
-      end
-    end
-    context "when 4 incorrect guesses" do
-      it "returns an array of size 56" do
-        @play.guesses = %w{a c d e}
-        @play.draw_gallow.size == 56
-      end
-    end
-    context "when 4 incorrect guesses and 3 correct guesses" do
-      it "returns an array of size 56" do
-        @play.guesses = %w{a c d e r u b}
-        @play.draw_gallow.size == 56
-      end
-    end
   end
+
 
   describe "@gallow_pics" do
     it "returns an array" do
@@ -63,6 +48,9 @@ describe Hangman do
 
 
   describe "#get_right_guesses" do
+    include_context "depends on guesses"
+    when_no_guess("get_right_guesses", %w{- - - -})
+
     it "returns an array" do
       @play.get_right_guesses.should be_an_instance_of Array
     end
