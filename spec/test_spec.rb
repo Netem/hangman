@@ -37,7 +37,7 @@
       end
     end
 
-method_name
+:method_name
 :correct_guesses
 :incorrect_guesses
 :expected_output

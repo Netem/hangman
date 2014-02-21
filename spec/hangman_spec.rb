@@ -9,12 +9,38 @@ describe Hangman do
     @play = Hangman.new "test_words.txt"
   end
 
-  describe "#new" do
-    it "creates an instance of the Hangmanclass" do
-      @play.should be_an_instance_of Hangman
+  shared_examples "no guesses made" do |initial_output|
+    it "contains #{initial_output}" do
+      subject.should eql initial_output
     end
   end
 
+  shared_examples "correct guesses made" do |correct_guesses, expected_output|
+    context "#{correct_guesses.size} correct guesses" do
+      it "contains #{expected_output}" do
+        @play.guesses = correct_guesses
+        subject.should eql expected_output
+      end
+    end
+  end
+
+  shared_examples "incorrect guesses made" do |incorrect_guesses, expected_output|
+    context "#{incorrect_guesses.size} incorrect guesses" do
+      it "contains #{expected_output}" do
+        @play.guesses = incorrect_guesses
+        subject.should eql expected_output
+      end
+    end
+  end
+
+  shared_examples "both correct/incorrect guesses" do |correct_guesses, incorrect_guesses, expected_output|
+    context "#{correct_guesses.size} correct guesses, and #{incorrect_guesses.size} incorrect guesses" do
+      it "contains #{expected_output}" do
+        @play.guesses = incorrect_guesses + correct_guesses
+        subject.should eql expected_output
+      end
+    end
+  end
 
   describe "#choose_word" do
     it "is 'ruby'" do
@@ -22,20 +48,16 @@ describe Hangman do
     end
   end
 
-
   describe "#draw_gallow" do
   end
 
-
-  describe "@gallow_pics" do
-    it "returns an array" do
-      @play.gallow_pics.should be_an_instance_of Array
-    end
-    it "returns an array of size 12" do
-      @play.gallow_pics.size == 12
-    end
+  describe "#get_right_guesses" do
+    subject {@play.get_right_guesses}
+    it_behaves_like "no guesses made", %w{- - - -}
+    it_behaves_like "correct guesses made", %w{r u b}, %w{r u b -}
+    it_behaves_like "incorrect guesses made", %w{a c d e}, %w{- - - -}
+    it_behaves_like "both correct/incorrect guesses", %w{b u y}, %w{m i n}, %w{- u b y}
   end
-
 
   describe "#get_frames" do
     it "returns an array" do
@@ -46,71 +68,19 @@ describe Hangman do
     end
   end
 
-
-  describe "#get_right_guesses" do
-    include_context "depends on guesses"
-    when_no_guess("get_right_guesses", %w{- - - -})
-
-    it "returns an array" do
-      @play.get_right_guesses.should be_an_instance_of Array
-    end
-
-    context "when no guesses" do
-      it "returns an array consisting of '-'" do
-        @play.get_right_guesses.include? "-"
-      end
-
-      it "returns an array of size 4" do
-        @play.get_right_guesses.size.should eql 4
-      end
-    end
-
-    context "when 1 correct guess" do
-      it "returns an array with the correct guessed letter" do
-        @play.guess_letter "r"
-        @play.get_right_guesses.include? "r"
-      end
-      it "returns an array of size 4" do
-        @play.guess_letter "r"
-        @play.get_right_guesses.size.should eql 4
-      end
-    end
-  end
-
-
   describe "#get_wrong_guesses" do
-    it "returns an array" do
-      @play.get_wrong_guesses.should be_an_instance_of Array
-    end
-
-    context "when no guesses" do
-      it "returns an array of size 0" do
-        @play.get_wrong_guesses.size.should eql 0
-      end
-    end
-
-    context "when 1 incorrect guess" do
-      it "returns the incorrect letter" do
-        @play.guess_letter("h")
-        @play.get_wrong_guesses.include? "h"
-      end
-      it "returns an array of size 1" do
-        @play.guess_letter("h")
-        @play.get_wrong_guesses.size.should eql 1
-      end
-    end
+    subject {@play.get_wrong_guesses}
+    it_behaves_like "no guesses made", []
+    it_behaves_like "correct guesses made", %w{r u b}, []
+    it_behaves_like "incorrect guesses made", %w{a c d e}, %w{a c d e}
+    it_behaves_like "both correct/incorrect guesses", %w{b u y}, %w{m i n}, %w{m i n}
   end
-
 
   describe "#guess_letter" do
-    it "@guesses returns an array" do
-      @play.guesses.should be_an_instance_of Array
-    end
-
     context "when no guesses" do
-    	it "returns an empty array" do
-    		@play.guesses.size.should eql 0
-    	end
+      it "returns an empty array" do
+        @play.guesses.size.should eql 0
+      end
     end
 
     context "when one guess" do
@@ -118,95 +88,49 @@ describe Hangman do
         @play.guess_letter "a"
         @play.guesses.size.should eql 1
       end
-  	end
+    end
   end
-
 
   describe "#guesses_left" do
-    it "returns a Fixnum" do
-      @play.guesses_left.should be_an_instance_of Fixnum
-    end
-
-    context "when no guesses" do
-      it "returns 11" do
-        @play.guesses_left.should eql 11
-      end
-    end
-
-    context "when two correct guesses" do
-      it "returns 11" do
-        @play.guesses = %w{r y}
-        @play.guesses_left.should eql 11
-      end
-    end
-
-    context "when two incorrect guesses" do
-      it "returns 9" do
-        @play.guesses = %w{q w}
-        @play.guesses_left.should eql 9
-      end
-    end
+    subject {@play.guesses_left}
+    it_behaves_like "no guesses made", 11
+    it_behaves_like "correct guesses made", %w{r u b}, 11
+    it_behaves_like "incorrect guesses made", %w{a c d e}, 7
+    it_behaves_like "both correct/incorrect guesses", %w{b u y}, %w{m i n}, 8
   end
-
 
   describe "#is_valid?" do
-    context "when passing A" do
-      it "returns true" do
-        @play.is_valid?("A").should eql true
-      end
-    end
-
-    context "when passing z" do
-      it "returns true" do
-        @play.is_valid?("z").should eql true
-      end
-    end
-
-    context "when passing _" do
-      it "returns nil" do
-        @play.is_valid?("_").should be_nil
-      end
-    end
-
-    context "when passing ff" do
-      it "returns false" do
-        @play.is_valid?("ff").should eql false
-      end
-    end
-
-    context "when passing 5" do
-      it "returns nil" do
-        @play.is_valid?("5").should be_nil
+    it "tests if input is valid" do
+      {"a" => true, "H" => true, "ff" => false, "-" => nil, 6 => nil}.each do |input, validity|
+        @play.is_valid?(input).should == validity
       end
     end
   end
-
 
   describe "#lose?" do
-    context "when 10 incorrect guesses and 3 correct guesses" do
-      it "returns false" do
-        @play.guesses = %w{r u b q w e a s d z x c v}
-        @play.lose?.should eql false
-      end
-    end
+    subject {@play.lose?}
+    it_behaves_like "no guesses made", false
+    it_behaves_like "correct guesses made", %w{r u b}, false
+    it_behaves_like "incorrect guesses made", %w{a c d e}, false
+    it_behaves_like "incorrect guesses made", %w{a c d e q w z x p l m}, true
+    it_behaves_like "both correct/incorrect guesses", %w{r u b y}, %w{m i n}, false
+    it_behaves_like "both correct/incorrect guesses", %w{r u b}, %w{a c d e q w z x p l m}, true
+  end
 
-    context "when 11 incorrect guesses and 3 correct guesses" do
-      it "returns true" do
-        @play.guesses = %w{r u b q w e a s d z x c v p}
-        @play.lose?.should eql true
-      end
+  describe "#new" do
+    it "creates an instance of the Hangmanclass" do
+      @play.should be_an_instance_of Hangman
     end
   end
 
-
   describe "#new_guess?" do
-    context "a new guess is passed" do
+    context "new guess is passed" do
       it "returns true" do
         @play.new_guess?("l").should eql true
       end 
     end
 
-    context "three guesses have already been made, and the second guess is passed again" do
+    context "3 guesses made, second guess passed again" do
       it "returns false" do
         @play.guesses = %w{w e r}
         @play.new_guess?("e").should eql false
@@ -214,20 +138,13 @@ describe Hangman do
     end
   end
 
-
   describe "#win?" do
-    context "when 10 incorrect guesses and 3 correct guesses" do
-      it "returns false" do
-        @play.guesses = %w{r u b q w e a s d z x c v}
-        @play.win?.should eql false
-      end
-    end
-
-    context "when 10 incorrect guesses and 4 correct guesses" do
-      it "returns true" do
-        @play.guesses = %w{r u b q w e a s d z x c v p y}
-        @play.win?.should eql true
-      end
-    end
+    subject {@play.win?}
+    it_behaves_like "no guesses made", false
+    it_behaves_like "correct guesses made", %w{r u b}, false
+    it_behaves_like "correct guesses made", %w{r u b y}, true
+    it_behaves_like "incorrect guesses made", %w{a c d e}, false
+    it_behaves_like "both correct/incorrect guesses", %w{r u b y}, %w{m i n}, true
+    it_behaves_like "both correct/incorrect guesses", %w{r u b}, %w{a c d e q w z x p l m}, false
   end
 end

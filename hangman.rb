@@ -18,7 +18,7 @@ class Hangman
   end
 
   def draw_gallow
-    gallow_pics[get_wrong_guesses.size] # Picks the pic based on how many faulty guesses the user's made
+    @gallow_pics[get_wrong_guesses.size] # Picks the pic based on how many faulty guesses the user's made
   end
 
   def get_frames
