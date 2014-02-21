@@ -5,20 +5,8 @@ require_relative 'spec_helper.rb'
 
 describe Hangman do
   before :each do
-    @play = Hangman.new "spec\\test_words.txt"
+    @play = Hangman.new "test_words.txt"
   end
-
-
-  def before_any_guess method_name, expected_class, expected_content
-    it "#{method_name} is #{expected_class}" do
-      method_name.should be_an_instance_of expected_class
-    end
-    it "#{method_name} returns #{expected_content}" do
-      method_name.should eql expected_content
-    end
-  end
-
-
 
   describe "#new" do
     it "creates an instance of the Hangmanclass" do
@@ -28,32 +16,48 @@ describe Hangman do
 
 
   describe "#choose_word" do
-    before_any_guess @play.secret_word, Array, %w{- - - -}
   end
 
 
   describe "#draw_gallow" do
-    context "no guesses made" do
+    it "returs an array" do
+      @play.draw_gallow.should be_an_instance_of Array
+    end
+    context "when no guesses made" do
       it "returns an array of size 8" do
-        @play.draw_gallow.size.should eql 8
+        @play.draw_gallow.size.should == 8
       end
     end
-
-    context "4 incorrect guesses made" do
+    context "when 4 incorrect guesses" do
       it "returns an array of size 56" do
-        @play.guesses = %W{a c d e}
-        @play.draw_gallow.size.should eql 56
+        @play.guesses = %w{a c d e}
+        @play.draw_gallow.size == 56
       end
+    end
+    context "when 4 incorrect guesses and 3 correct guesses" do
+      it "returns an array of size 56" do
+        @play.guesses = %w{a c d e r u b}
+        @play.draw_gallow.size == 56
+      end
+    end
+  end
+
+  describe "@gallow_pics" do
+    it "returns an array" do
+      @play.gallow_pics.should be_an_instance_of Array
+    end
+    it "returns an array of size 12" do
+      @play.gallow_pics.size == 12
     end
   end
 
 
   describe "#get_frames" do
-    it "@gallow_pics returns an array" do
-      @play.gallow_pics.should be_an_instance_of Array
+    it "returns an array" do
+      @play.get_frames.should be_an_instance_of Array
     end
     it "returns an array of size 12" do
-      @play.gallow_pics.size.should eql 12
+      @play.get_frames.size == 12
     end
   end
 

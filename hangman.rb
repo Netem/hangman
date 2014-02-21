@@ -11,7 +11,7 @@ class Hangman
   end
 
   def choose_word file_name
-    file = open file_name
+    file = open Dir.glob("#{file_name}").join
     word_list = file.read.split " "
     file.close
     word_list[rand(word_list.size)].chomp.scan(/./) # Chooses a random word from the word list, and puts each letter into an array

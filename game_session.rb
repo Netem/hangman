@@ -1,6 +1,5 @@
 # game_session.rb
-require 'rubygems'
-require 'pry'
+
 require_relative "play_hangman.rb"
 
 class GameSession
@@ -26,5 +25,3 @@ class GameSession
     puts "Bye! Shutting down."
   end
 end
-
-GameSession.run
