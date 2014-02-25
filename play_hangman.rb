@@ -11,11 +11,11 @@ class PlayHangman
     @play = Hangman.new
   end
 
-  def get_input
+  def self.get_input
     gets.to_s.chomp.downcase
   end
 
-  def give_intro
+  def self.give_intro
     puts "Let's hang the man!\nI'll pick a word, you guess a letter."
   end
 
@@ -26,7 +26,7 @@ class PlayHangman
     puts "\n\n"
   end
 
-  def check(guess)
+  def check guess
     unless play.new_guess? guess
       puts "Already guessed!\n"
       return
@@ -47,17 +47,20 @@ class PlayHangman
     if play.win?
       puts "You win... Alright. Fine. I want a rematch!"
     end
+  end
 
+  def self.playing_the_game game
+    print "Your guess: "
+    guess = PlayHangman.get_input
+    game.check guess
+    game.play.win? || game.play.lose?
   end
 
   def self.run
+    PlayHangman.give_intro
     game = PlayHangman.new
-    game.give_intro
-
     begin
-      print "Your guess: "
-      guess = game.get_input
-      game.check guess
-    end until game.play.win? || game.play.lose?
+      finished = PlayHangman.playing_the_game game
+    end until finished == true
   end
 end

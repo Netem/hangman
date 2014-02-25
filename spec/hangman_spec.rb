@@ -49,6 +49,7 @@ describe Hangman do
   end
 
   describe "#draw_gallow" do
+    pending
   end
 
   describe "#get_right_guesses" do
